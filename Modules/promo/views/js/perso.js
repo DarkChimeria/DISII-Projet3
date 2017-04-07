@@ -1,7 +1,9 @@
 
-		$(function() {
-			$(".rslides").responsiveSlides();
-			auto: false,
-			namespace: "rslides",
-			nav: false
+		// $(function() {
+		// 	$(".rslides").responsiveSlides();
+		// 	auto: false,
+		// 	namespace: "rslides"
+		// });
+jQuery(document).ready(function($) {
+			$('.my-slider').unslider();
 		});

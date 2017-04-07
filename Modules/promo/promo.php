@@ -93,7 +93,18 @@ class Promo extends Module
         $variables['image'] = Tools::getValue('image', '');
         $variables['debut'] = Tools::getValue('debut', '');
         $variables['fin'] = Tools::getValue('fin', '');
+        $id = Tools::getValue('id', '');
         $variables['msg'] = '';
+
+        if(!empty($id)){
+           // $this->context->smarty->assign('idpromo',$id);
+           $sql = $this->delete($id);
+
+        }elseif($id === null){
+            $this->context->smarty->assign('idpromo','');
+        }else{
+            $this->context->smarty->assign('idpromo','');
+        }
 
         if (Tools::isSubmit('submitNewsletter')) {
 
@@ -118,11 +129,10 @@ class Promo extends Module
                 echo "File is not an image.";
                 $variables['msg'] = 1;
             }
-         }
+        }
 
         return $variables;
     }
-
 
     /**
      * Load the configuration form
@@ -140,6 +150,8 @@ class Promo extends Module
 
         $variables = $this->getWidgetVariables();
 
+        
+
         $this->context->smarty->assign('title','');
         $this->context->smarty->assign('description','');
         $this->context->smarty->assign('legend','');
@@ -147,6 +159,7 @@ class Promo extends Module
         $this->context->smarty->assign('image','');
         $this->context->smarty->assign('debut','');
         $this->context->smarty->assign('fin','');
+
         $this->context->smarty->assign('msg',$variables['msg']);
         $this->context->smarty->assign('variables',$variables);
         $this->context->smarty->assign('slides',$promo);
@@ -171,6 +184,14 @@ class Promo extends Module
 
     }
 
+
+public function delete($a)
+    {
+        $res = '';
+        $res &= Db::getInstance()->execute("
+            DELETE FROM `"._DB_PREFIX_."promo_img` WHERE id_promo_slides = ". $a
+            );
+    }
 
     /**
      * Create the form that will be displayed in the configuration of your module.
@@ -325,43 +346,42 @@ class Promo extends Module
      */
     public function hookHeader()
     {
+        $this->context->controller->addJS('http://code.jquery.com/jquery-2.1.4.min.js');
+        $this->context->controller->addJS($this->_path.'views/js/bootstrap.min.js');
+        $this->context->controller->addJS($this->_path.'views/js/front.js');
+        $this->context->controller->addCSS($this->_path.'views/css/front.css');
 
-       $this->context->controller->addJS($this->_path.'views/js/jquery.min.js');
-       $this->context->controller->addJS($this->_path.'views/js/bootstrap.min.js');
-       $this->context->controller->addJS($this->_path.'views/js/front.js');
-       $this->context->controller->addCSS($this->_path.'views/css/front.css');
-       $this->context->controller->addJS($this->_path.'views/js/responsiveslides.js');
-       $this->context->controller->addJS($this->_path.'views/js/perso.js');
-       $this->context->controller->addCSS($this->_path.'views/css/responsiveslides.css');
-   }
-
-
-
-   public function getSlides($active = null)
-   {
-    $slides = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
-        SELECT *
-        FROM '._DB_PREFIX_.'promo_img'
-        );
-
-    foreach ($slides as &$slide) {
-        $slide['image_url'] = $this->context->link->getMediaLink(_MODULE_DIR_.'promo/images/'.$slide['image']);
+        $this->context->controller->addJS($this->_path.'views/js/responsiveslides.js');
+        $this->context->controller->addCSS($this->_path.'views/css/responsiveslides.css');
+        $this->context->controller->addCSS($this->_path.'views/css/themes.css');
     }
 
-    return $slides;
-}
 
-public function hookDisplayHome()
-{
+    public function getSlides($active = null)
+    {
+        $slides = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
+            SELECT *
+            FROM '._DB_PREFIX_.'promo_img'
+            );
 
-    $slides = $this->getSlides();
+        foreach ($slides as &$slide) {
+            $slide['image_url'] = $this->context->link->getMediaLink(_MODULE_DIR_.'promo/images/'.$slide['image']);
+        }
+
+        return $slides;
+    }
+
+    public function hookDisplayHome()
+    {
+
+        $slides = $this->getSlides();
     // $this->smarty->assign('jsslider', '<script>$(function(){$(".rslides").responsiveSlides();auto: false,namespace: "rslides1",nav: false});</script>');    
-    $this->smarty->assign('slides',$slides);
+        $this->smarty->assign('slides',$slides);
 
 
-    $today = date('Y-m-d');
-    $this->smarty->assign('date',$today);
+        $today = date('Y-m-d');
+        $this->smarty->assign('date',$today);
 
-    return $this->display(__FILE__, 'test.tpl');
-}
+        return $this->display(__FILE__, 'front.tpl');
+    }
 }

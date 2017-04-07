@@ -37,7 +37,7 @@
 	</div> -->
 
 	<div class="panel">
-		<h3><i class="icon icon-tags"></i> {l s='Documentation' mod='promo'} </h3>
+		<h3><i class="icon icon-tags"></i> {l s='Documentation' mod='promo'}</h3>
 		<p>
 			<table id="promo" class="table table-striped">
 				<thead>
@@ -56,14 +56,14 @@
 
 					{foreach from=$slides item=slide}
 					<tr>
-						<td>{$slide.id_promo_slides}</td>
-						<td><img src="{$slide.image_url}" alt="" style="width: 250px;"></td>
-						<td>{$slide.title}</td>
-						<td>{$slide.description}</td>
-						<td>{$slide.legend}</td>
-						<td>{$slide.debut}</td>
-						<td>{$slide.fin}</td>
-						<td>A construire</td>
+							<td>{$slide.id_promo_slides}</td>
+							<td><img src="{$slide.image_url}" alt="" style="width: 250px;"></td>
+							<td>{$slide.title}</td>
+							<td>{$slide.description}</td>
+							<td>{$slide.legend}</td>
+							<td>{$slide.debut}</td>
+							<td>{$slide.fin}</td>
+							<td><a class="btn btn-danger" href="{$smarty.server.REQUEST_URI}&id={$slide.id_promo_slides}">X</a></td>
 					</tr>
 					{/foreach}
 
@@ -73,21 +73,22 @@
 	</div>
 
 	<div class="panel">
-		<h3><i class="icon icon-tags"></i> {l s='Promo' d='Modules.Promo.Admin'}</h3>
+		<h3><i class="icon icon-tags"></i>{l s='Promo' d='Modules.Promo.Admin'} </h3>
+		
 		<div>
 			{if $msg == 2}
 			<div class="alert alert-success">
-			<strong>Super!</strong> La promotion est ajoutée
+				<strong>Super!</strong> La promotion est ajoutée
 			</div>
 			{elseif $msg == 1}
 			<div class="alert alert-warning">
-			<strong>Oups!</strong> La promotion n'a pas été ajoutée
+				<strong>Oups!</strong> La promotion n'a pas été ajoutée
 			</div>
 			{else}
-			
+
 			{/if}
 		</div>
-		
+
 		<form action="" method="post" enctype="multipart/form-data">
 			<div class="form-wrapper">
 				<div class="form-group">
@@ -123,14 +124,14 @@
 					<label for="exampleInputEmail1">
 						Début de la promotion
 					</label>
-					<input class="form-control" type="text" id="debut" name="debut" value="{$debut}" placeholder="{l s='Date de début promo' d='Modules.Promo.Admin'}"/>
+					<input class="form-control datepicker" type="text" id="debut" name="debut" value="{$debut}" placeholder="{l s='Date de début promo' d='Modules.Promo.Admin'}"/>
 				</div>
 				<div class="form-group">
 
 					<label for="exampleInputEmail1">
 						Fin de la promotion
 					</label>
-					<input class="form-control" type="text" id="fin" name="fin" value="{$fin}" placeholder="{l s='Date de fin promo' d='Modules.Promo.Admin'}"/>
+					<input class="form-control datepicker" type="text" id="fin" name="fin" value="{$fin}" placeholder="{l s='Date de fin promo' d='Modules.Promo.Admin'}"/>
 				</div>
 				<div class="form-group">
 
@@ -151,10 +152,10 @@
 
 		</div>
 
-{$jsdata}
-{$cssdata}
-<script type="text/javascript">
-	$(document).ready(function(){
-    $('#promo').DataTable();
-});
-</script>
+		{$jsdata}
+		{$cssdata}
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$('#promo').DataTable();
+			});
+		</script>
