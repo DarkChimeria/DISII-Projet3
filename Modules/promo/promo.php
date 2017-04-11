@@ -93,46 +93,91 @@ class Promo extends Module
         $variables['image'] = Tools::getValue('image', '');
         $variables['debut'] = Tools::getValue('debut', '');
         $variables['fin'] = Tools::getValue('fin', '');
+        $variables['eid'] = Tools::getValue('eid', '');
+        $variables['etitle'] = Tools::getValue('etitle', '');
+        $variables['edescription'] = Tools::getValue('edescription', '');
+        $variables['elegend'] = Tools::getValue('elegend', '');
+        $variables['eurl'] = Tools::getValue('eurl', '');
+        $variables['eimage'] = Tools::getValue('eimage', '');
+        $variables['edebut'] = Tools::getValue('edebut', '');
+        $variables['efin'] = Tools::getValue('efin', '');
         $id = Tools::getValue('id', '');
         $variables['msg'] = '';
 
         if(!empty($id)){
            // $this->context->smarty->assign('idpromo',$id);
-           $sql = $this->delete($id);
+         $sql = $this->delete($id);
 
-        }elseif($id === null){
-            $this->context->smarty->assign('idpromo','');
-        }else{
-            $this->context->smarty->assign('idpromo','');
-        }
+     }elseif($id === null){
+        $this->context->smarty->assign('idpromo','');
+    }else{
+        $this->context->smarty->assign('idpromo','');
+    }
 
-        if (Tools::isSubmit('submitNewsletter')) {
+    if (Tools::isSubmit('addPromo')) {
 
-            $variables['type_image'] = Tools::strtolower(Tools::substr(strrchr($_FILES['image']['name'], '.'), 1));
-            $variables['name_image'] = $_FILES['image']['name'];
-            $target_dir = dirname(__FILE__).'/images/';
-            $target_file = $target_dir . basename($_FILES["image"]["name"]);
+        $variables['type_image'] = Tools::strtolower(Tools::substr(strrchr($_FILES['image']['name'], '.'), 1));
+        $variables['name_image'] = $_FILES['image']['name'];
+        $target_dir = dirname(__FILE__).'/images/';
+        $target_file = $target_dir . basename($_FILES["image"]["name"]);
 
 
-            $check = getimagesize($_FILES["image"]["tmp_name"]);
-            if($check !== false) {
-                echo "File is an image - " . $check["mime"] . ".";
-                if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-                    echo "The file ". basename($_FILES["image"]["name"]). " has been uploaded.";
-                    $sql = $this->add($variables['title'], $variables['description'], $variables['legend'], $variables['url'], $variables['name_image'], $variables['debut'], $variables['fin']); 
-                    $variables['msg'] = 2;
-                } else {
-                    $variables['msg'] = 1;
-                }
-
+        $check = getimagesize($_FILES["image"]["tmp_name"]);
+        if($check !== false) {
+            echo "File is an image - " . $check["mime"] . ".";
+            if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+                echo "The file ". basename($_FILES["image"]["name"]). " has been uploaded.";
+                $sql = $this->add($variables['title'], $variables['description'], $variables['legend'], $variables['url'], $variables['name_image'], $variables['debut'], $variables['fin']); 
+                $variables['msg'] = 2;
             } else {
-                echo "File is not an image.";
                 $variables['msg'] = 1;
             }
+
+        } else {
+            echo "File is not an image.";
+            $variables['msg'] = 1;
+        }
+    }
+
+    if (Tools::isSubmit('editPromo')) {
+
+        $variables['type_image'] = Tools::strtolower(Tools::substr(strrchr($_FILES['eimage']['name'], '.'), 1));
+        $variables['name_image'] = $_FILES['eimage']['name'];
+        $target_dir = dirname(__FILE__).'/images/';
+        $target_file = $target_dir . basename($_FILES["eimage"]["name"]);
+
+        if(!empty($_FILES["eimage"]["name"])){
+        $check = getimagesize($_FILES["eimage"]["tmp_name"]);
+        if($check !== false) {
+            echo "File is an image - " . $check["mime"] . ".";
+            if (move_uploaded_file($_FILES["eimage"]["tmp_name"], $target_file)) {
+                echo "The file ". basename($_FILES["eimage"]["name"]). " has been uploaded.";
+                $sql = $this->update($variables['etitle'], $variables['edescription'], $variables['elegend'], $variables['eurl'], $variables['name_image'], $variables['edebut'], $variables['efin'],$variables['eid']); 
+                $variables['msg'] = 2;
+            } else {
+                $variables['msg'] = 1;
+            }
+
+        } else {
+            echo "File is not an image.";
+            $variables['msg'] = 1;
+        }
         }
 
-        return $variables;
+        if(empty($_FILES["eimage"]["name"])){
+        $sql = $this->updateNoImage($variables['etitle'], $variables['edescription'], $variables['elegend'], $variables['eurl'], $variables['edebut'], $variables['efin'],$variables['eid']); 
+                $variables['msg'] = 2;
+            } 
+            else {
+                $variables['msg'] = 1;
+            }
+
+        
+        
     }
+
+    return $variables;
+}
 
     /**
      * Load the configuration form
@@ -151,7 +196,7 @@ class Promo extends Module
         $variables = $this->getWidgetVariables();
 
         
-
+        $this->context->smarty->assign('id','');
         $this->context->smarty->assign('title','');
         $this->context->smarty->assign('description','');
         $this->context->smarty->assign('legend','');
@@ -159,6 +204,15 @@ class Promo extends Module
         $this->context->smarty->assign('image','');
         $this->context->smarty->assign('debut','');
         $this->context->smarty->assign('fin','');
+
+        $this->context->smarty->assign('eid','');
+        $this->context->smarty->assign('etitle','');
+        $this->context->smarty->assign('edescription','');
+        $this->context->smarty->assign('elegend','');
+        $this->context->smarty->assign('eurl','');
+        $this->context->smarty->assign('eimage','');
+        $this->context->smarty->assign('edebut','');
+        $this->context->smarty->assign('efin','');
 
         $this->context->smarty->assign('msg',$variables['msg']);
         $this->context->smarty->assign('variables',$variables);
@@ -169,6 +223,15 @@ class Promo extends Module
 
         $this->context->smarty->assign('cssdata', '<link rel="stylesheet" type="text/css" href="../modules/promo/views/css/jquery.dataTables.css">');
         $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
+
+
+        
+        $this->context->controller->addJqueryUI('ui.datepicker');
+        
+        $this->_html = '';
+        $this->_html .= $this->ModuleDatepicker("datepicker1", true);
+        
+        
 
         return $output.$this->renderForm();
     }
@@ -184,8 +247,26 @@ class Promo extends Module
 
     }
 
+    public function update($a,$b,$c,$d,$e,$f,$g,$id)
+    {
+        $res = '';
+        $res &= Db::getInstance()->execute("
+            UPDATE `"._DB_PREFIX_."promo_img` SET title = '" .$a ."', description = '" . $b . "', legend = '" . $c . "', image = '" . $e . "', url = '" . $d . "', debut = '" . $f . "', fin = '" . $g . "' WHERE id_promo_slides = '" . $id . "'"
+            );
 
-public function delete($a)
+    }
+
+
+   public function updateNoImage($a,$b,$c,$d,$f,$g,$id)
+    {
+        $res = '';
+        $res &= Db::getInstance()->execute("
+            UPDATE `"._DB_PREFIX_."promo_img` SET title = '" .$a ."', description = '" . $b . "', legend = '" . $c . "', url = '" . $d . "', debut = '" . $f . "', fin = '" . $g . "' WHERE id_promo_slides = '" . $id . "'"
+            );
+
+    }
+
+    public function delete($a)
     {
         $res = '';
         $res &= Db::getInstance()->execute("
@@ -328,6 +409,31 @@ public function delete($a)
         }
     }
 
+
+    private function ModuleDatepicker($class, $time)
+    {
+        $return = "";
+        if ($time)
+            $return = '
+            var dateObj = new Date();
+            var hours = dateObj.getHours();
+            var mins = dateObj.getMinutes();
+            var secs = dateObj.getSeconds();
+            if (hours < 10) { hours = "0" + hours; }
+            if (mins < 10) { mins = "0" + mins; }
+            if (secs < 10) { secs = "0" + secs; }
+            var time = " "+hours+":"+mins+":"+secs;';
+        $return .= '
+        $(function() {
+            $(".'.Tools::htmlentitiesUTF8($class).'").datepicker({
+                prevText:"",
+                nextText:"",
+                dateFormat:"yy-mm-dd"'.($time ? '+time' : '').'});
+        });';
+        
+        return '<script type="text/javascript">'.$return.'</script>';
+    }
+
     /**
     * Add the CSS & JavaScript files you want to be loaded in the BO.
     */
@@ -375,7 +481,7 @@ public function delete($a)
     {
 
         $slides = $this->getSlides();
-    // $this->smarty->assign('jsslider', '<script>$(function(){$(".rslides").responsiveSlides();auto: false,namespace: "rslides1",nav: false});</script>');    
+        
         $this->smarty->assign('slides',$slides);
 
 

@@ -38,8 +38,6 @@
 					<p class="caption">{$slide.title}
 						<br />
 						{$slide.description}
-						
-						<!-- {$slide.legend} -->
 					</p>
 				</li>
 				{else}
