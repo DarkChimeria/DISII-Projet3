@@ -23,11 +23,12 @@
 	*  International Registered Trademark & Property of PrestaShop SA
 	*}
 
+<!-- Appel du JS nécessaire à l'affichage du slider -->
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 	<script src="../modules/promo/views/js/responsiveslides.min.js"></script>
 
 
-
+<!-- Début de la div du Slider Promotion -->
 	<div class="panel">
 		<div class="callbacks_container">
 			<ul class="rslides" id="slider4">
@@ -47,10 +48,25 @@
 			</div>
 			
 		</div>
+<!-- Fin de la div du Slider Promotion -->
 
-
+<!-- Appel de paramètre pour l'affichage du slider et paramètres sur le redimensionnement de la fenêtre hôte -->
 		{literal}
 		<script>
+
+// Permet de cacher ou non le bandeau sur chaque slider en fonction du point de rupture d'une fenêtre
+			window.onresize = function() {
+				var largeur = $(window).width();
+
+				if(largeur < 599){
+
+					$('.caption').hide();
+				}else{
+					$('.caption').show();
+				}
+			}
+
+// Paramètres du slider courant
 			$(function() {
 				$("#slider4").responsiveSlides({
 					auto: false,

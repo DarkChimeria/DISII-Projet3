@@ -1,6 +1,6 @@
 <?php
 /**
-* 2007-2017 PrestaShop
+* 2007-2017 Projet 3
 *
 * NOTICE OF LICENSE
 *
@@ -18,8 +18,8 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-*  @author    PrestaShop SA <contact@prestashop.com>
-*  @copyright 2007-2017 PrestaShop SA
+*  @author    Projet 3 <projet3@projet.com>
+*  @copyright 20017-2018 Projet 3
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 */
@@ -49,8 +49,8 @@ class Promo extends Module
 
         parent::__construct();
 
-        $this->displayName = $this->l('Module de Promo');
-        $this->description = $this->l('Test du module de promo');
+        $this->displayName = $this->l('Module de Promotions');
+        $this->description = $this->l('Slider de promotions. Affichage par dates');
 
         $this->confirmUninstall = $this->l('Êtes-vous sûr de vouloir désinstaller ce module ?');
 
@@ -63,8 +63,6 @@ class Promo extends Module
      */
     public function install()
     {
-        //Configuration::updateValue('PROMO_LIVE_MODE', false);
-
         include(dirname(__FILE__).'/sql/install.php');
 
         return parent::install() &&
@@ -105,7 +103,6 @@ class Promo extends Module
         $variables['msg'] = '';
 
         if(!empty($id)){
-           // $this->context->smarty->assign('idpromo',$id);
          $sql = $this->delete($id);
 
      }elseif($id === null){
@@ -117,24 +114,28 @@ class Promo extends Module
     if (Tools::isSubmit('addPromo')) {
 
         $variables['type_image'] = Tools::strtolower(Tools::substr(strrchr($_FILES['image']['name'], '.'), 1));
-        $variables['name_image'] = $_FILES['image']['name'];
+        $alea = rand(0, 10000);
+        $variables['name_image'] = $alea . $_FILES['image']['name'];
         $target_dir = dirname(__FILE__).'/images/';
-        $target_file = $target_dir . basename($_FILES["image"]["name"]);
+        $target_file = $target_dir . basename($alea . $_FILES["image"]["name"]);
 
 
         $check = getimagesize($_FILES["image"]["tmp_name"]);
-        if($check !== false) {
+        list($width, $height) = getimagesize($_FILES["image"]["tmp_name"]);
+
+        if($check !== false && $height == 250 && $width == 1110) {
             echo "File is an image - " . $check["mime"] . ".";
             if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-                echo "The file ". basename($_FILES["image"]["name"]). " has been uploaded.";
+                // echo "The file ". basename($_FILES["image"]["name"]). " has been uploaded.";
                 $sql = $this->add($variables['title'], $variables['description'], $variables['legend'], $variables['url'], $variables['name_image'], $variables['debut'], $variables['fin']); 
                 $variables['msg'] = 2;
+
             } else {
                 $variables['msg'] = 1;
             }
 
         } else {
-            echo "File is not an image.";
+            // echo "File is not an image.";
             $variables['msg'] = 1;
         }
     }
@@ -142,41 +143,36 @@ class Promo extends Module
     if (Tools::isSubmit('editPromo')) {
 
         $variables['type_image'] = Tools::strtolower(Tools::substr(strrchr($_FILES['eimage']['name'], '.'), 1));
-        $variables['name_image'] = $_FILES['eimage']['name'];
+        $alea = rand(0, 10000);
+        $variables['name_image'] = $alea . $_FILES['eimage']['name'];
         $target_dir = dirname(__FILE__).'/images/';
-        $target_file = $target_dir . basename($_FILES["eimage"]["name"]);
+        $target_file = $target_dir . basename($alea . $_FILES["eimage"]["name"]);
+
 
         if(!empty($_FILES["eimage"]["name"])){
-        $check = getimagesize($_FILES["eimage"]["tmp_name"]);
-        if($check !== false) {
-            echo "File is an image - " . $check["mime"] . ".";
-            if (move_uploaded_file($_FILES["eimage"]["tmp_name"], $target_file)) {
-                echo "The file ". basename($_FILES["eimage"]["name"]). " has been uploaded.";
-                $sql = $this->update($variables['etitle'], $variables['edescription'], $variables['elegend'], $variables['eurl'], $variables['name_image'], $variables['edebut'], $variables['efin'],$variables['eid']); 
-                $variables['msg'] = 2;
+            list($width, $height) = getimagesize($_FILES["eimage"]["tmp_name"]);
+            $check = getimagesize($_FILES["eimage"]["tmp_name"]);
+            if($check !== false && $height == 250 && $width == 1110) {
+                echo "File is an image - " . $check["mime"] . ".";
+                if (move_uploaded_file($_FILES["eimage"]["tmp_name"], $target_file)) {
+                    echo "The file ". basename($_FILES["eimage"]["name"]). " has been uploaded.";
+                    $sql = $this->update($variables['etitle'], $variables['edescription'], $variables['elegend'], $variables['eurl'], $variables['name_image'], $variables['edebut'], $variables['efin'],$variables['eid']); 
+                    $variables['msg'] = 2;
+                } else {
+                    $variables['msg'] = 1;
+                }
+
             } else {
-                $variables['msg'] = 1;
-            }
+              $variables['msg'] = 1;
+          }
+      }else{
+         $sql = $this->updateNoImage($variables['etitle'], $variables['edescription'], $variables['elegend'], $variables['eurl'], $variables['edebut'], $variables['efin'],$variables['eid']); 
+         $variables['msg'] = 2;
+     }
 
-        } else {
-            echo "File is not an image.";
-            $variables['msg'] = 1;
-        }
-        }
+ }
 
-        if(empty($_FILES["eimage"]["name"])){
-        $sql = $this->updateNoImage($variables['etitle'], $variables['edescription'], $variables['elegend'], $variables['eurl'], $variables['edebut'], $variables['efin'],$variables['eid']); 
-                $variables['msg'] = 2;
-            } 
-            else {
-                $variables['msg'] = 1;
-            }
-
-        
-        
-    }
-
-    return $variables;
+ return $variables;
 }
 
     /**
@@ -192,6 +188,10 @@ class Promo extends Module
         }
 
         $promo = $this->getSlides();
+
+        $code = $this->getPromo();
+        
+        $this->context->smarty->assign('promoActuelles',$code);
 
         $variables = $this->getWidgetVariables();
 
@@ -220,6 +220,7 @@ class Promo extends Module
         $this->context->smarty->assign('module_dir', $this->_path);
 
         $this->context->smarty->assign('jsdata', '<script src="../modules/promo/views/js/jquery.dataTables.min.js" type="text/javascript"></script>');
+        $this->context->smarty->assign('jsdata1', '<script src="../modules/promo/views/js/datatables.min.js" type="text/javascript"></script>');
 
         $this->context->smarty->assign('cssdata', '<link rel="stylesheet" type="text/css" href="../modules/promo/views/css/jquery.dataTables.css">');
         $output = $this->context->smarty->fetch($this->local_path.'views/templates/admin/configure.tpl');
@@ -239,30 +240,57 @@ class Promo extends Module
 
     public function add($a,$b,$c,$d,$e,$f,$g)
     {
-        $res = '';
-        $res &= Db::getInstance()->execute("
-            INSERT INTO `"._DB_PREFIX_."promo_img` (`title`, `description`, `legend`, `url`, `image`,`debut`,`fin`)
-            VALUES('".$a."', '".$b."', '".$c."', '".$d."', '".$e."', '".$f."', '".$g."')"
-            );
+        Db::getInstance()->insert('promo_img', array(
+            'title' => pSQL($a),
+            'description' => pSQL($b),
+            'legend' => pSQL($c),
+            'url' => pSQL($d),
+            'image' => pSQL($e),
+            'debut' => pSQL($f),
+            'fin' => pSQL($g)
+            ));
+        // $res &= Db::getInstance()->execute("
+        //     INSERT INTO `"._DB_PREFIX_."promo_img` (`title`, `description`, `legend`, `url`, `image`,`debut`,`fin`)
+        //     VALUES('".$a."', '".$b."', '".$c."', '".$d."', '".$e."', '".$f."', '".$g."')"
+        //     );
 
     }
 
     public function update($a,$b,$c,$d,$e,$f,$g,$id)
     {
-        $res = '';
-        $res &= Db::getInstance()->execute("
-            UPDATE `"._DB_PREFIX_."promo_img` SET title = '" .$a ."', description = '" . $b . "', legend = '" . $c . "', image = '" . $e . "', url = '" . $d . "', debut = '" . $f . "', fin = '" . $g . "' WHERE id_promo_slides = '" . $id . "'"
-            );
+        $where = "`id_promo_slides` = '".$id."'";
+        Db::getInstance()->update('promo_img', array(
+            'title' => pSQL($a),
+            'description' => pSQL($b),
+            'legend' => pSQL($c),
+            'url' => pSQL($d),
+            'image' => pSQL($e),
+            'debut' => pSQL($f),
+            'fin' => pSQL($g)
+            ), 
+         $where);
+        // $res &= Db::getInstance()->execute("
+        //     UPDATE `"._DB_PREFIX_."promo_img` SET title = '" . pSQL($a) ."', description = '" . pSQL($b) . "', legend = '" . pSQL($c) . "', image = '" . pSQL($e) . "', url = '" . pSQL($d) . "', debut = '" . pSQL($f) . "', fin = '" . pSQL($g) . "' WHERE id_promo_slides = '" . $id . "'"
+        //     );
 
     }
 
 
-   public function updateNoImage($a,$b,$c,$d,$f,$g,$id)
+    public function updateNoImage($a,$b,$c,$d,$f,$g,$id)
     {
-        $res = '';
-        $res &= Db::getInstance()->execute("
-            UPDATE `"._DB_PREFIX_."promo_img` SET title = '" .$a ."', description = '" . $b . "', legend = '" . $c . "', url = '" . $d . "', debut = '" . $f . "', fin = '" . $g . "' WHERE id_promo_slides = '" . $id . "'"
-            );
+        $where = "`id_promo_slides` = '".$id."'";
+        Db::getInstance()->update('promo_img', array(
+            'title' => pSQL($a),
+            'description' => pSQL($b),
+            'legend' => pSQL($c),
+            'url' => pSQL($d),
+            'debut' => pSQL($f),
+            'fin' => pSQL($g)
+            ), 
+         $where);
+        // $res &= Db::getInstance()->execute("
+        //     UPDATE `"._DB_PREFIX_."promo_img` SET title = '" . $a ."', description = '" . $b . "', legend = '" . $c . "', url = '" . $d . "', debut = '" . $f . "', fin = '" . $g . "' WHERE id_promo_slides = '" . $id . "'"
+        //     );
 
     }
 
@@ -415,24 +443,24 @@ class Promo extends Module
         $return = "";
         if ($time)
             $return = '
-            var dateObj = new Date();
-            var hours = dateObj.getHours();
-            var mins = dateObj.getMinutes();
-            var secs = dateObj.getSeconds();
-            if (hours < 10) { hours = "0" + hours; }
-            if (mins < 10) { mins = "0" + mins; }
-            if (secs < 10) { secs = "0" + secs; }
-            var time = " "+hours+":"+mins+":"+secs;';
+        var dateObj = new Date();
+        var hours = dateObj.getHours();
+        var mins = dateObj.getMinutes();
+        var secs = dateObj.getSeconds();
+        if (hours < 10) { hours = "0" + hours; }
+        if (mins < 10) { mins = "0" + mins; }
+        if (secs < 10) { secs = "0" + secs; }
+        var time = " "+hours+":"+mins+":"+secs;';
         $return .= '
         $(function() {
             $(".'.Tools::htmlentitiesUTF8($class).'").datepicker({
                 prevText:"",
                 nextText:"",
                 dateFormat:"yy-mm-dd"'.($time ? '+time' : '').'});
-        });';
-        
-        return '<script type="text/javascript">'.$return.'</script>';
-    }
+            });';
+
+            return '<script type="text/javascript">'.$return.'</script>';
+        }
 
     /**
     * Add the CSS & JavaScript files you want to be loaded in the BO.
@@ -452,8 +480,8 @@ class Promo extends Module
      */
     public function hookHeader()
     {
-        $this->context->controller->addJS('http://code.jquery.com/jquery-2.1.4.min.js');
-        $this->context->controller->addJS($this->_path.'views/js/bootstrap.min.js');
+        // $this->context->controller->addJS('http://code.jquery.com/jquery-2.1.4.min.js');
+        // $this->context->controller->addJS($this->_path.'views/js/bootstrap.min.js');
         $this->context->controller->addJS($this->_path.'views/js/front.js');
         $this->context->controller->addCSS($this->_path.'views/css/front.css');
 
@@ -475,6 +503,16 @@ class Promo extends Module
         }
 
         return $slides;
+    }
+
+    public function getPromo($active = null)
+    {
+        $code = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS('
+            SELECT *
+            FROM '._DB_PREFIX_.'cart_rule'
+            );
+
+        return $code;
     }
 
     public function hookDisplayHome()
