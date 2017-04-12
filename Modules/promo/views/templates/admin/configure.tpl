@@ -185,7 +185,7 @@
 						<h4 class="modal-title">Editer la promotion</h4>
 					</div>
 					<div class="modal-body">
-						<form action="" method="post" id="formupdate" enctype="multipart/form-data">
+						<form action="" method="post" id="formupdate" onsubmit="return validateFormEdit()" enctype="multipart/form-data">
 							<input type="text" id="eid" name="eid" value="{$eid}" style="display: none;" />
 							<div class="form-wrapper">
 								<div class="form-group">
@@ -267,14 +267,41 @@
 function validateForm() {
     var x = document.forms["formadd"]["title"].value;
     var y = document.forms["formadd"]["image"].value;
+    var a = document.forms["formadd"]["debut"].value;
+    var b = document.forms["formadd"]["fin"].value;
+    if(a > b){
+    	alert("Attention ! La date de fin ne peut pas être supérieure à la date de début");
+    }
     if (x == "") {
         alert("Le titre doit être mentionné");
         return false;
     }else if (y == "") {
         alert("Une image doit être sélectionnée");
         return false;
+    }else if (a == "") {
+        alert("Une date de début doit être sélectionnée");
+        return false;
+    }else if (b == "") {
+        alert("Une date de fin doit être sélectionnée");
+        return false;
     }
-}			
+}	
+
+function validateFormEdit() {
+    var x = document.forms["formupdate"]["etitle"].value;
+    var a = document.forms["formupdate"]["edebut"].value;
+    var b = document.forms["formupdate"]["efin"].value;
+    if (x == "") {
+        alert("Le titre doit être mentionné");
+        return false;
+    }else if (a == "") {
+        alert("Une date de début doit être sélectionnée");
+        return false;
+    }else if (b == "") {
+        alert("Une date de fin doit être sélectionnée");
+        return false;
+    }
+}					
 // Permet l'affichage des <table> de manière dynamique. Responsive, des colonnes sont prioritaires sur médias plus petits
 $(document).ready(function(){
 	$('#promo').DataTable({
