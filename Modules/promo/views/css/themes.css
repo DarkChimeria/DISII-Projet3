@@ -135,16 +135,17 @@
     display: block;
     position: absolute;
     z-index: 2;
-    font-size: 14px;
+    font-size: 16px;
     text-shadow: none;
     color: #fff;
     background: #000;
-    background: rgba(0,0,0, .3);
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 10px 20px;
-    margin: 0;
+    background: rgba(0,0,0, .5);
+    left: 919px;
+    right: -6px;
+    bottom: 182px;
+    padding: 1px 1px;
+    margin: 11px;
     max-width: none;
-  }
+    align-content: ;
+}
 }

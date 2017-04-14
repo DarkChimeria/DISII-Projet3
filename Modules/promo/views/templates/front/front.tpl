@@ -35,10 +35,10 @@
 				{foreach from=$slides item=slide}
 				{if $slide.debut <= $date AND $slide.fin >= $date}
 				<li>
-					<a href="{$slide.url}"><img src="{$slide.image_url}" alt=""></a>
-					<p class="caption">{$slide.title}
-						<br />
-						{$slide.description}
+					<a href="{$slide.url}"><img src="{$slide.image_url}" alt="{$slide.description}"></a>
+					<p class="caption">Code : {$slide.title}
+<!-- 						<br />
+						 -->
 					</p>
 				</li>
 				{else}

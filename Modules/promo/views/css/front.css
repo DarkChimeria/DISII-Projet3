@@ -30,6 +30,8 @@ img{
    height:auto;
 }
 
+
+
 .rslides {
   margin: 0 auto 40px;
   }
@@ -84,7 +86,7 @@ img{
   }
 
 a {
-  color: #fff;
+  color: #8fb32a;
   text-decoration: none;
   }
 
@@ -116,7 +118,7 @@ a {
 h3 {
   font: 20px/30px "Helvetica Neue", Helvetica, Arial, sans-serif;
   text-align: center;
-  color: #fff;
+  color: #8fb32a;
   }
 
 .events {

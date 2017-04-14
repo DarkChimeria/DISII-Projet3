@@ -65,6 +65,7 @@
 							<th>Lien</th>
 							<th>Date Début</th>
 							<th>Date Fin</th>
+							<th>Statut</th>
 							<th data-priority="2">Actions</th>
 						</tr>
 					</thead>
@@ -80,6 +81,14 @@
 							<td><span id='url'>{$slide.url}</span></td>
 							<td><span id='debut'>{$slide.debut}</span></td>
 							<td><span id='fin'>{$slide.fin}</span></td>
+							<td>
+							{if $slide.debut <= $date AND $slide.fin >= $date}
+							<i class="icon icon-check" style="color: green;"> </i>
+							{else}
+							<i class="icon icon-close" style="color: red;"></i>
+							{/if}
+
+							</span></td>
 							<td><button type="button" onclick="editPromo('{$slide.id_promo_slides}')" class="btn btn-info" id="{$slide.id_promo_slides}" data-toggle="modal" data-target="#myModal"><i class="icon icon-pencil"></i></button> <a href="{$smarty.server.REQUEST_URI}&id={$slide.id_promo_slides}"><button  class="btn btn-danger"><i class="icon icon-close"></i></button></a></td>
 						</tr>
 						{/foreach}

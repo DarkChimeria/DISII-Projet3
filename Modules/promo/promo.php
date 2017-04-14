@@ -39,7 +39,7 @@ class Promo extends Module
         $this->name = 'promo';
         $this->tab = 'front_office_features';
         $this->version = '1.0.0';
-        $this->author = 'Anthony';
+        $this->author = 'Maxi Jouets';
         $this->need_instance = 1;
 
         /**
@@ -218,6 +218,8 @@ class Promo extends Module
         $this->context->smarty->assign('variables',$variables);
         $this->context->smarty->assign('slides',$promo);
         $this->context->smarty->assign('module_dir', $this->_path);
+         $today = date('Y-m-d');
+        $this->context->smarty->assign('date',$today);
 
         $this->context->smarty->assign('jsdata', '<script src="../modules/promo/views/js/jquery.dataTables.min.js" type="text/javascript"></script>');
         $this->context->smarty->assign('jsdata1', '<script src="../modules/promo/views/js/datatables.min.js" type="text/javascript"></script>');
