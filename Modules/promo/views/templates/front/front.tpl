@@ -69,10 +69,11 @@
 // Paramètres du slider courant
 			$(function() {
 				$("#slider4").responsiveSlides({
-					auto: false,
+					auto: true,
 					pager: true,
 					nav: true,
 					speed: 500,
+					timeout: 4000,
 					namespace: "centered-btns"
 				});
 			});

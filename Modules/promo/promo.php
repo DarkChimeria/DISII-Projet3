@@ -127,7 +127,9 @@ class Promo extends Module
             echo "File is an image - " . $check["mime"] . ".";
             if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
                 // echo "The file ". basename($_FILES["image"]["name"]). " has been uploaded.";
-                $sql = $this->add($variables['title'], $variables['description'], $variables['legend'], $variables['url'], $variables['name_image'], $variables['debut'], $variables['fin']); 
+                $sql = $this->add($variables['title'], $variables['description'], $variables['legend'], $variables['url'], $variables['name_image'], $variables['debut'], $variables['fin']);
+                $previousPage = $_SERVER["HTTP_REFERER"];
+                header('Location: '.$previousPage); 
                 $variables['msg'] = 2;
 
             } else {
@@ -157,6 +159,8 @@ class Promo extends Module
                 if (move_uploaded_file($_FILES["eimage"]["tmp_name"], $target_file)) {
                     echo "The file ". basename($_FILES["eimage"]["name"]). " has been uploaded.";
                     $sql = $this->update($variables['etitle'], $variables['edescription'], $variables['elegend'], $variables['eurl'], $variables['name_image'], $variables['edebut'], $variables['efin'],$variables['eid']); 
+                    $previousPage = $_SERVER["HTTP_REFERER"];
+                    header('Location: '.$previousPage); 
                     $variables['msg'] = 2;
                 } else {
                     $variables['msg'] = 1;
@@ -167,6 +171,8 @@ class Promo extends Module
           }
       }else{
          $sql = $this->updateNoImage($variables['etitle'], $variables['edescription'], $variables['elegend'], $variables['eurl'], $variables['edebut'], $variables['efin'],$variables['eid']); 
+         $previousPage = $_SERVER["HTTP_REFERER"];
+         header('Location: '.$previousPage); 
          $variables['msg'] = 2;
      }
 
@@ -218,7 +224,7 @@ class Promo extends Module
         $this->context->smarty->assign('variables',$variables);
         $this->context->smarty->assign('slides',$promo);
         $this->context->smarty->assign('module_dir', $this->_path);
-         $today = date('Y-m-d');
+        $today = date('Y-m-d');
         $this->context->smarty->assign('date',$today);
 
         $this->context->smarty->assign('jsdata', '<script src="../modules/promo/views/js/jquery.dataTables.min.js" type="text/javascript"></script>');
@@ -270,7 +276,7 @@ class Promo extends Module
             'debut' => pSQL($f),
             'fin' => pSQL($g)
             ), 
-         $where);
+        $where);
         // $res &= Db::getInstance()->execute("
         //     UPDATE `"._DB_PREFIX_."promo_img` SET title = '" . pSQL($a) ."', description = '" . pSQL($b) . "', legend = '" . pSQL($c) . "', image = '" . pSQL($e) . "', url = '" . pSQL($d) . "', debut = '" . pSQL($f) . "', fin = '" . pSQL($g) . "' WHERE id_promo_slides = '" . $id . "'"
         //     );
@@ -289,7 +295,7 @@ class Promo extends Module
             'debut' => pSQL($f),
             'fin' => pSQL($g)
             ), 
-         $where);
+        $where);
         // $res &= Db::getInstance()->execute("
         //     UPDATE `"._DB_PREFIX_."promo_img` SET title = '" . $a ."', description = '" . $b . "', legend = '" . $c . "', url = '" . $d . "', debut = '" . $f . "', fin = '" . $g . "' WHERE id_promo_slides = '" . $id . "'"
         //     );
@@ -302,6 +308,8 @@ class Promo extends Module
         $res &= Db::getInstance()->execute("
             DELETE FROM `"._DB_PREFIX_."promo_img` WHERE id_promo_slides = ". $a
             );
+        $previousPage = $_SERVER["HTTP_REFERER"];
+        header('Location: '.$previousPage); 
     }
 
     /**
